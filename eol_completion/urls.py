@@ -8,7 +8,7 @@ from .views import EolCompletionFragmentView
 
 urlpatterns = (
     url(
-        r'courses2/{}/student_completion/$'.format(
+        r'plugin/{}/student_completion/$'.format(
             settings.COURSE_ID_PATTERN,
         ),
         EolCompletionFragmentView.as_view(),
