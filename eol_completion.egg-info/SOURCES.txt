@@ -1,0 +1,16 @@
+eol_completion/__init__.py
+eol_completion/admin.py
+eol_completion/apps.py
+eol_completion/models.py
+eol_completion/plugins.py
+eol_completion/tests.py
+eol_completion/urls.py
+eol_completion/views.py
+eol_completion.egg-info/PKG-INFO
+eol_completion.egg-info/SOURCES.txt
+eol_completion.egg-info/dependency_links.txt
+eol_completion.egg-info/entry_points.txt
+eol_completion.egg-info/top_level.txt
+eol_completion/migrations/__init__.py
+eol_completion/settings/__init__.py
+eol_completion/settings/common.py

@@ -1,0 +1,13 @@
+Metadata-Version: 1.1
+Name: eol-completion
+Version: 0.0.1
+Summary: Eol Completion
+Home-page: https://eol.uchile.cl
+Author: matiassalinas
+Author-email: matsalinas@uchile.cl
+License: UNKNOWN
+Description: Eol Completion
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 2
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
