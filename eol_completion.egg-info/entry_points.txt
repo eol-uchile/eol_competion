@@ -1,0 +1,6 @@
+[lms.djangoapp]
+eol_completion = eol_completion.apps:EolCompletionConfig
+
+[openedx.course_tab]
+eol_completion = eol_completion.plugins:EolCompletionTab
+
