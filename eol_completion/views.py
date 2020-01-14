@@ -37,7 +37,7 @@ class EolCompletionFragmentView(EdxFragmentView):
         context = self.get_context(request, course_id)
         if context is None:
             return HttpResponse(status=401)
-            
+
         html = render_to_string(
             'eol_completion/eol_completion_fragment.html', context)
         fragment = Fragment(html)
@@ -51,25 +51,14 @@ class EolCompletionFragmentView(EdxFragmentView):
         if not staff_access:
             return None
 
-        current_offset = int(request.GET.get('offset', 1))
-        if current_offset < 1:
-                current_offset = 1 
-        data = cache.get("eol_completion-" + course_id + "-data-"+ str(current_offset))
+        data = cache.get("eol_completion-" + course_id + "-data")
         if data is None:
-            nmax_page = 100
 
             enrolled_students = User.objects.filter(
                 courseenrollment__course_id=course_key,
                 courseenrollment__is_active=1
             ).order_by('username').values('id', 'username', 'email')
 
-            total_students = enrolled_students.count()
-            total_page = int(math.ceil(float(total_students) / nmax_page)) or 1     
-
-            if current_offset > total_page:
-                current_offset = total_page   
-                         
-            enrolled_students = enrolled_students[(current_offset - 1) * nmax_page :(current_offset) * nmax_page]    
             store = modulestore()
             # Dictionary with all course blocks
             info = self.dump_module(store.get_course(course_key))
@@ -83,20 +72,19 @@ class EolCompletionFragmentView(EdxFragmentView):
                 content, info, enrolled_students, course_key, max_unit)
             time = datetime.now()
             time = time.strftime("%d/%m/%Y, %H:%M:%S")
-            data.extend([user_tick, content, max_unit, time,current_offset,total_page,total_students])
-            cache.set("eol_completion-" + course_id + "-data-"+ str(current_offset), data, 5)
+            data.extend([user_tick, content, max_unit, time])
+            cache.set("eol_completion-" + course_id + "-data", data, 300)
 
         context = {
             "course": course,
-            'page_url': reverse('completion_view', kwargs={'course_id': six.text_type(course_key)}),
+            'page_url': reverse(
+                'completion_view',
+                kwargs={
+                    'course_id': six.text_type(course_key)}),
             "lista_tick": data[0],
             "content": data[1],
             "max": data[2],
-            "time": data[3],
-            "offset": data[4],
-            "total_page": data[5],
-            "total_students": data[6]
-        }
+            "time": data[3]}
 
         return context
 
@@ -159,29 +147,33 @@ class EolCompletionFragmentView(EdxFragmentView):
         students_id = [x['id'] for x in enrolled_students]
         students_username = [x['username'] for x in enrolled_students]
         students_email = [x['email'] for x in enrolled_students]
-        i=0
+        i = 0
         certificate = self.get_certificate(students_id, course_key)
-        blocks = self.get_block(students_id,course_key)
+        blocks = self.get_block(students_id, course_key)
 
         for user in students_id:
-            i += 1            
+            i += 1
             # Get a list of true/false if they completed the units
             # and number of completed units
             data = self.get_data_tick(content, info, user, blocks, max_unit)
 
             user_tick[user] = {'user': user,
-                                'username': students_username[i-1],
-                                'email': students_email[i-1],
-                                'certificate': True if user in certificate else False,
-                                'data': data}            
+                               'username': students_username[i - 1],
+                               'email': students_email[i - 1],
+                               'certificate': 'Si' if user in certificate else 'No',
+                               'data': data}
         return user_tick
-        
+
     def get_block(self, students_id, course_key):
         """
             Get all completed students block
-        """  
+        """
         aux_blocks = BlockCompletion.objects.filter(
-                user_id__in=students_id, course_key=course_key, completion=1.0).values('user_id','block_key')
+            user_id__in=students_id,
+            course_key=course_key,
+            completion=1.0).values(
+            'user_id',
+            'block_key')
         blocks = defaultdict(list)
         for b in aux_blocks:
             blocks[b['user_id']].append(b['block_key'])
@@ -200,9 +192,10 @@ class EolCompletionFragmentView(EdxFragmentView):
         first = True
         for unit in content.items():
             if unit[1]['type'] == 'unit':
-                unit_info = info[unit[1]['id']]                
-                blocks_unit = unit_info['children']                
-                blocks_unit = [UsageKey.from_string(x) for x in blocks_unit if not 'discussion+block' in x]
+                unit_info = info[unit[1]['id']]
+                blocks_unit = unit_info['children']
+                blocks_unit = [UsageKey.from_string(
+                    x) for x in blocks_unit if 'discussion+block' not in x]
                 checker = self.get_block_tick(blocks_unit, blocks, user)
                 completed_unit_per_section += 1
                 num_units_section += 1
@@ -224,24 +217,25 @@ class EolCompletionFragmentView(EdxFragmentView):
             "/" + str(num_units_section)
         data.append(aux_point)
         aux_final_point = str(completed_unit) + "/" + str(max_unit)
-        data.append(aux_final_point)        
+        data.append(aux_final_point)
         return data
 
     def get_block_tick(self, blocks_unit, blocks, user):
         """
             Check if unit block is completed
-        """                
+        """
         if all(elem in blocks[user] for elem in blocks_unit):
             return True
-        return False        
+        return False
 
     def get_certificate(self, students_id, course_id):
         """
             Check if users has generated a certificate
         """
-        certificates = GeneratedCertificate.objects.filter(user_id__in=students_id,course_id=course_id).values("user_id")
+        certificates = GeneratedCertificate.objects.filter(
+            user_id__in=students_id, course_id=course_id).values("user_id")
         cer_students_id = [x["user_id"] for x in certificates]
-        
+
         return cer_students_id
 
     def dump_module(

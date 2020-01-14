@@ -77,14 +77,29 @@
     .grade-book-footer{
         text-align: center;
     }
+    li {
+        float: left;
+        list-style-type: none;
+    }
+    .list-divided .item, ul .item, .list-bulleted .item, ol .item, .list-ordered .item, .list-inline .item, .list-grouped .item, .list .item, .list li, ol li, ul li {
+        display: list-item;
+        margin-bottom: 1rem;
+        margin-right: 0.5rem;  
+    }
+
 </style>
 <div class="container">
+    <div class="loading" style="text-align: center;">
+            Cargando datos de la tabla ...
+    </div>    
     <div class="teams-wrapper">
         <main id="main" aria-label="Content" tabindex="-1">
-            <section class="teams-content">
+            <section class="teams-content" style="visibility: hidden;">
                 <div class="dataTables_wrapper">
-                    <div id="botones" style="padding: 15px;"> 
-					    Mostrar/Ocultar Sección:  
+                    <div style="padding: 15px;"> 
+					    Mostrar/Ocultar Sección:				    
+                        <ul id="botones" style="padding-left: 20px;"> 
+                        </ul>      
 				    </div>
                     <table id="mytable" class="stripe row-border order-column cell-border no-footer" style="width:100%;table-layout:auto; text-align: center;">
                         <thead>
@@ -180,37 +195,12 @@
                                     <td>${student[1]['certificate']}</td>
                                 %endif
                             </tr>
-                            %endfor                           
+                            %endfor                     
                         </tbody>                        
                     </table>
                 </div>
             </section>            
             <div class="grade-book-footer">
-                %if offset <= total_page:
-                    %if total_page > 1 and offset > 1:
-                    <a href="${page_url}?offset=${offset - 1}"
-                        class="sequence-nav-button button-previous">
-                        <span class="icon fa fa-chevron-left" aria-hidden="true"></span><span class="sr">Atras</span>
-                    </a>
-                    %endif
-                %endif
-        
-                ${_('Page')} ${offset} ${_('of')} ${total_page}
-        
-                %if offset  < total_page:
-                <a href="${page_url}?offset=${offset + 1}"
-                     class="sequence-nav-button button-next">
-                    <span class="icon fa fa-chevron-right" aria-hidden="true"></span><span class="sr">Siguiente</span>
-                  </a>
-                %endif               
-           
-                </br>
-                %if offset*100>= total_students:
-                    ${offset}-${total_students} ${_('of')} ${total_students} Estudiantes
-                %else:
-                    ${offset}-${offset*100} ${_('of')} ${total_students} Estudiantes
-                %endif
-                </br>
                 Ultima Actualización: ${time} - Próxima actualización disponible dentro de 5 minutos
             </div>
         </main>
