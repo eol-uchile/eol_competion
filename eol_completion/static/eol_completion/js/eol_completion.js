@@ -24,6 +24,7 @@ $(document).ready(function () {
         fixedColumns:   {
             leftColumns: 2            
         },
+        "pageLength": 100,
         columnDefs: [
             { "type": 'natural', orderable: true, className: 'reorder', targets: array_index_column_pto },
             { orderable: true, className: 'reorder', targets: [1] },
