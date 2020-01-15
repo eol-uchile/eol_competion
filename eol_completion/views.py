@@ -21,10 +21,10 @@ from django.urls import reverse
 from xblock_discussion import DiscussionXBlock
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.inheritance import compute_inherited_metadata, own_metadata
-from courseware.access import has_access
+from courseware.access import has_access, get_user_role
 from completion.models import BlockCompletion
 from collections import OrderedDict, defaultdict
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseServerError
 # Create your views here.
 
 FILTER_LIST = ['xml_attributes']
@@ -35,7 +35,9 @@ class EolCompletionFragmentView(EdxFragmentView):
     def render_to_fragment(self, request, course_id, **kwargs):
 
         context = self.get_context(request, course_id)
-        
+        if context is None:
+            raise Http404()
+
         html = render_to_string(
             'eol_completion/eol_completion_fragment.html', context)
         fragment = Fragment(html)
@@ -44,6 +46,10 @@ class EolCompletionFragmentView(EdxFragmentView):
     def get_context(self, request, course_id):
         course_key = CourseKey.from_string(course_id)
         course = get_course_with_access(request.user, "load", course_key)
+
+        staff_access = bool(has_access(request.user, 'staff', course))
+        if not staff_access:
+            return None
 
         data = cache.get("eol_completion-" + course_id + "-data")
         if data is None:
@@ -69,7 +75,7 @@ class EolCompletionFragmentView(EdxFragmentView):
             data.extend([user_tick, content, max_unit, time])
             cache.set("eol_completion-" + course_id + "-data", data, 300)
 
-        context = {
+        context = {            
             "course": course,
             'page_url': reverse(
                 'completion_view',
