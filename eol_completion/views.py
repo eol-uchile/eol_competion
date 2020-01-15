@@ -35,21 +35,15 @@ class EolCompletionFragmentView(EdxFragmentView):
     def render_to_fragment(self, request, course_id, **kwargs):
 
         context = self.get_context(request, course_id)
-        if context is None:
-            return HttpResponse(status=401)
-
+        
         html = render_to_string(
             'eol_completion/eol_completion_fragment.html', context)
         fragment = Fragment(html)
         return fragment
-
+    
     def get_context(self, request, course_id):
         course_key = CourseKey.from_string(course_id)
         course = get_course_with_access(request.user, "load", course_key)
-
-        staff_access = bool(has_access(request.user, 'staff', course))
-        if not staff_access:
-            return None
 
         data = cache.get("eol_completion-" + course_id + "-data")
         if data is None:
