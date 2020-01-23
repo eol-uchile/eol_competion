@@ -105,7 +105,7 @@
                         <thead>
                             <!--Main Header-->
                             <tr>
-                                <th hidden rowspan="3" data-col_from="0" data-col_to="0">Correo</th>
+                                <th rowspan="3" data-col_from="0" data-col_to="0">Correo</th>
                                 <th rowspan="3" data-col_from="1" data-col_to="1">Estudiante</th>
                                 <% col_len = 2 %>
                                 %for section in content.items():
@@ -176,26 +176,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            %for student in lista_tick.items():
-                            <tr>
-                                <td hidden>${student[1]['email']}</td>
-                                <td>${student[1]['username']}</td>
-                                %if student[1]['data'] is not None:
-                                    %for unit in student[1]['data']:
-                                        <td>
-                                            %if unit == True:
-                                                &#10004;
-                                            %elif unit == False:
-                                            
-                                            %else:
-                                                ${unit}
-                                            %endif
-                                        </td>                                   
-                                    %endfor
-                                    <td>${student[1]['certificate']}</td>
-                                %endif
-                            </tr>
-                            %endfor                     
+                                       
                         </tbody>                        
                     </table>
                 </div>

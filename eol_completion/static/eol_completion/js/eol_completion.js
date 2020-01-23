@@ -16,6 +16,7 @@ $(document).ready(function () {
     var myTable = $('#mytable').DataTable({
         scrollX: true,
         rowReorder: true,
+        "ajax": "data",
         "processing": true,
         "sDom": "B<'row'>lfrtip",        
         buttons: [ {
@@ -28,6 +29,7 @@ $(document).ready(function () {
         "pageLength": 100,
         "lengthMenu": [[50, 100, 200, -1], [50, 100, 200, "Todos"]],
         columnDefs: [
+            { targets: [0], "visible": false, "searchable": false },
             { "type": 'natural', orderable: true, className: 'reorder', targets: array_index_column_pto },
             { orderable: true, className: 'reorder', targets: [1] },
             { orderable: false, targets: '_all' }
