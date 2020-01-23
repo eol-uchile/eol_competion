@@ -8,14 +8,14 @@ from .views import EolCompletionFragmentView, EolCompletionData
 
 urlpatterns = (
     url(
-        r'courses2/{}/student_completion/$'.format(
+        r'courses/{}/student_completion$'.format(
             settings.COURSE_ID_PATTERN,
         ),
         EolCompletionFragmentView.as_view(),
         name='completion_view',
     ),
     url(
-        r'courses2/{}/student_completion/data$'.format(
+        r'courses/{}/student_completion/data$'.format(
             settings.COURSE_ID_PATTERN,
         ),
         staff_member_required(EolCompletionData.as_view()),
