@@ -10,7 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run Tests
-      run: |
-        chmod +x .github/test.sh
+      run: |        
         cd .github/
         docker-compose run lms /openedx/requirements/eol_completion/.github/test.sh
