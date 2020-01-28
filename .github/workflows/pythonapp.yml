@@ -11,5 +11,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: Run Tests
       run: |
+        chmod +x .github/test.sh
         cd .github/
         docker-compose run lms /openedx/requirements/eol_completion/.github/test.sh
